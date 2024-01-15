@@ -1,6 +1,7 @@
 package mindSwap.mindera.porto.RentACarAPI.controller;
 
 import mindSwap.mindera.porto.RentACarAPI.clientDto.ClientCreateDto;
+import mindSwap.mindera.porto.RentACarAPI.clientDto.ClientUpdateDto;
 import mindSwap.mindera.porto.RentACarAPI.model.Client;
 import mindSwap.mindera.porto.RentACarAPI.service.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +33,17 @@ public class ClientController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @DeleteMapping(path = "clientId")
+    @PutMapping("{clientId}")
+    public ResponseEntity<Client> updateClient(@PathVariable("clientId") Long clientId, @RequestBody ClientUpdateDto clientUpdateDto) {
+        clientService.updateClient(clientId, clientUpdateDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @DeleteMapping(path = "{clientId}")
     public ResponseEntity<Client> deleteClient(@PathVariable("clientId") Long clientId) {
         clientService.deleteClient(clientId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }

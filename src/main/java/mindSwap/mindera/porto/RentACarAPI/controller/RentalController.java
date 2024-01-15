@@ -3,6 +3,7 @@ package mindSwap.mindera.porto.RentACarAPI.controller;
 import mindSwap.mindera.porto.RentACarAPI.model.Rental;
 import mindSwap.mindera.porto.RentACarAPI.rentalDto.RentalCreateDto;
 import mindSwap.mindera.porto.RentACarAPI.rentalDto.RentalPostDto;
+import mindSwap.mindera.porto.RentACarAPI.rentalDto.RentalUpdateDto;
 import mindSwap.mindera.porto.RentACarAPI.service.RentalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +32,19 @@ public class RentalController {
     public ResponseEntity<Rental> addNewRental(@RequestBody RentalPostDto rental) {
         rentalService.addNewRental(rental);
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+
+    @PutMapping(path = "{rentalId}")
+    public ResponseEntity<Rental> updateRental(@PathVariable("rentalId") Long id, @RequestBody RentalUpdateDto rental) {
+        rentalService.updateRental(id, rental);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "{rentalId}")
+    public ResponseEntity<Rental> deleteRental(@PathVariable("rentalId") Long id) {
+        rentalService.deleteRental(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
