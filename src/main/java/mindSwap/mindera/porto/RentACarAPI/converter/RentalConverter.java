@@ -27,6 +27,8 @@ public class RentalConverter {
         );
     }
 
+
+
     public static RentalCreateDto fromRentalToCreateDto(Rental rental){
         return new RentalCreateDto(
                 rental.getClient(),

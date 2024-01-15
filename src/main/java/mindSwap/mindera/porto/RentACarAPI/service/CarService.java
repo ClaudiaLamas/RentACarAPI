@@ -63,15 +63,13 @@ public class CarService {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body(" Licence plate already exists");
             carToUpdate.setPlate(car.getPlate());
         }
-
-
     }
 
     public Car getCarById(Long id) {
         Optional<Car> optionalCar = carRepository.findById(id);
 
         if (optionalCar.isEmpty()) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Car woth id " + id + " does not exist");
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Car with id " + id + " does not exist");
         }
         return optionalCar.get();
     }

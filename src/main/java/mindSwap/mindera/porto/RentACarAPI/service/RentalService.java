@@ -2,8 +2,11 @@ package mindSwap.mindera.porto.RentACarAPI.service;
 
 
 import mindSwap.mindera.porto.RentACarAPI.converter.RentalConverter;
+import mindSwap.mindera.porto.RentACarAPI.model.Car;
+import mindSwap.mindera.porto.RentACarAPI.model.Client;
 import mindSwap.mindera.porto.RentACarAPI.model.Rental;
 import mindSwap.mindera.porto.RentACarAPI.rentalDto.RentalCreateDto;
+import mindSwap.mindera.porto.RentACarAPI.rentalDto.RentalPostDto;
 import mindSwap.mindera.porto.RentACarAPI.repository.RentalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,21 +34,18 @@ public class RentalService {
                 .toList();
     }
 
-    public void addNewRental(RentalCreateDto rentalDto) {
+    public void addNewRental(RentalPostDto rentalDto) {
 
-        //Car car = carService.getCarById(rentalDto.car().getId());
-        //Client client = clientService.getClientById(rentalDto.client().getId());
+        Car car = carService.getCarById(rentalDto.carId());
+        Client client = clientService.getClientById(rentalDto.clientId());
 
         //Rental newRental = RentalConverter.fromRentalDtoToRental(client, car, rentalDto.initialRent(), rentalDto.lastDayRental());
 
+        Rental newRental = new Rental(client, car, rentalDto.initialDate(), rentalDto.lastDayRent());
 
-        //Rental newRental = new Rental(client, car, rentalDto.initialRent(), rentalDto.lastDayRental());
-
-        Rental newRental = RentalConverter.fromRentalDtoToCrearteRental(rentalDto);
         rentalRepository.save(newRental);
 
     }
-
 
 
 
