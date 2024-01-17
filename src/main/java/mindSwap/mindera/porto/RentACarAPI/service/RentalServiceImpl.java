@@ -17,19 +17,20 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class RentalService {
+public class RentalServiceImpl implements RentalServiceI{
 
     private final RentalRepository rentalRepository;
-    private final CarService carService;
-    private final ClientService clientService;
+    private final CarServiceImpl carService;
+    private final ClientServiceImpl clientService;
 
     @Autowired
-    public RentalService(RentalRepository rentalRepository, CarService carService, ClientService clientService) {
+    public RentalServiceImpl(RentalRepository rentalRepository, CarServiceImpl carService, ClientServiceImpl clientService) {
         this.rentalRepository = rentalRepository;
         this.carService = carService;
         this.clientService = clientService;
     }
 
+    @Override
     public List<RentalCreateDto> getRentals() {
         List<Rental> rental = rentalRepository.findAll();
         return rental.stream()
@@ -37,7 +38,7 @@ public class RentalService {
                 .toList();
     }
 
-    public void addNewRental(RentalPostDto rentalPostDto) {
+    public Rental addNewRental(RentalPostDto rentalPostDto) {
 
         Car car = carService.getCarById(rentalPostDto.carId());
 
@@ -48,7 +49,7 @@ public class RentalService {
 
         Rental newRental = new Rental(client, car, rentalPostDto.initialDate(), rentalPostDto.lastDayRent());
 
-        rentalRepository.save(newRental);
+        return rentalRepository.save(newRental);
 
     }
 

@@ -18,12 +18,12 @@ import java.util.Optional;
 import static mindSwap.mindera.porto.RentACarAPI.converter.ClientConverter.fromClientDtoToCrearteClient;
 
 @Service
-public class ClientService {
+public class ClientServiceImpl implements ClientServiceI{
 
     private final ClientRepository clientRepository;
 
     @Autowired
-    public ClientService(ClientRepository clientRepository) {
+    public ClientServiceImpl(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
 
@@ -34,15 +34,15 @@ public class ClientService {
                 .toList();
     }
 
-    public void addNewClient(ClientCreateDto client) {
+    public Client addNewClient(ClientCreateDto client) {
         Optional<Client> clientOptional = this.clientRepository.findClientByEmail(client.email());
         if (clientOptional.isPresent()) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
-            return;
+            return null;
         }
 
         Client newClient = fromClientDtoToCrearteClient(client);
-        clientRepository.save(newClient);
+        return clientRepository.save(newClient);
     }
 
     public void deleteClient(Long clientId) {
@@ -82,5 +82,7 @@ public class ClientService {
         }
         return optionalClient.get();
     }
+
+
 
 }

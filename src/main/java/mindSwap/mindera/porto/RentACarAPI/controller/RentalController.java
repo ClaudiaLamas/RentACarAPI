@@ -4,7 +4,7 @@ import mindSwap.mindera.porto.RentACarAPI.model.Rental;
 import mindSwap.mindera.porto.RentACarAPI.rentalDto.RentalCreateDto;
 import mindSwap.mindera.porto.RentACarAPI.rentalDto.RentalPostDto;
 import mindSwap.mindera.porto.RentACarAPI.rentalDto.RentalUpdateDto;
-import mindSwap.mindera.porto.RentACarAPI.service.RentalService;
+import mindSwap.mindera.porto.RentACarAPI.service.RentalServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +15,11 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/rentals")
 public class RentalController {
-    private final RentalService rentalService;
+    private final RentalServiceImpl rentalService;
 
 
     @Autowired
-    public RentalController(RentalService rentalService) {
+    public RentalController(RentalServiceImpl rentalService) {
         this.rentalService = rentalService;
     }
 
@@ -30,10 +30,9 @@ public class RentalController {
 
     @PostMapping("/")
     public ResponseEntity<Rental> addNewRental(@RequestBody RentalPostDto rental) {
-        rentalService.addNewRental(rental);
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
 
+        return new ResponseEntity<>(rentalService.addNewRental(rental), HttpStatus.CREATED);
+    }
 
     @PutMapping(path = "{rentalId}")
     public ResponseEntity<Rental> updateRental(@PathVariable("rentalId") Long id, @RequestBody RentalUpdateDto rental) {
