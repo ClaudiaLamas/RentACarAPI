@@ -18,11 +18,14 @@ public class Rental {
     @ManyToOne
     private Car car;
 
+    public Rental() {
+    }
+
     public Rental(Client client, Car car, LocalDate initialRent, LocalDate lastDayRental) {
-        this.initialRent = initialRent;
-        this.lastDayRental = lastDayRental;
         this.client = client;
         this.car = car;
+        this.initialRent = initialRent;
+        this.lastDayRental = lastDayRental;
     }
 
 

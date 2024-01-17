@@ -2,7 +2,7 @@ package mindSwap.mindera.porto.RentACarAPI.controller;
 
 import mindSwap.mindera.porto.RentACarAPI.carDto.CarCreateDto;
 import mindSwap.mindera.porto.RentACarAPI.model.Car;
-import mindSwap.mindera.porto.RentACarAPI.service.CarService;
+import mindSwap.mindera.porto.RentACarAPI.service.CarServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +13,10 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/cars")
 public class CarController {
-    private final CarService carService;
+    private final CarServiceImpl carService;
 
     @Autowired
-    public CarController (CarService carService) {
+    public CarController (CarServiceImpl carService) {
         this.carService = carService;
     }
 
@@ -27,8 +27,8 @@ public class CarController {
 
     @PostMapping("/")
     public ResponseEntity<Car> addNewClient(@RequestBody CarCreateDto car) {
-        carService.addNewCar(car);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+        return new ResponseEntity<>(carService.addNewCar(car), HttpStatus.CREATED);
     }
 
     @DeleteMapping(path = "carId")

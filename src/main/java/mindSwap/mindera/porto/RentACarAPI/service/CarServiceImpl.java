@@ -15,12 +15,12 @@ import java.util.Optional;
 import static mindSwap.mindera.porto.RentACarAPI.converter.CarConverter.fromDtaToCreateCar;
 
 @Service
-public class CarService {
+public class CarServiceImpl implements CarServiceI{
 
     private final CarRepository carRepository;
 
     @Autowired
-    public CarService(CarRepository carRepository) {
+    public CarServiceImpl(CarRepository carRepository) {
         this.carRepository = carRepository;
     }
 
@@ -31,12 +31,12 @@ public class CarService {
                 .toList();
     }
 
-    public void addNewCar(CarCreateDto car) {
+    public Car addNewCar(CarCreateDto car) {
         Optional<Car> carOptional = this.carRepository.findCarByPlate(car.plate());
         if(carOptional.isPresent())
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This plate already exists");
         Car newCar = fromDtaToCreateCar(car);
-        carRepository.save(newCar);
+        return carRepository.save(newCar);
     }
 
     public void deleteCar(Long carĨd) {
@@ -63,15 +63,13 @@ public class CarService {
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body(" Licence plate already exists");
             carToUpdate.setPlate(car.getPlate());
         }
-
-
     }
 
     public Car getCarById(Long id) {
         Optional<Car> optionalCar = carRepository.findById(id);
 
         if (optionalCar.isEmpty()) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Car woth id " + id + " does not exist");
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Car with id " + id + " does not exist");
         }
         return optionalCar.get();
     }

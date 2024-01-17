@@ -1,9 +1,12 @@
 package mindSwap.mindera.porto.RentACarAPI.service;
 
 import mindSwap.mindera.porto.RentACarAPI.clientDto.ClientCreateDto;
+import mindSwap.mindera.porto.RentACarAPI.clientDto.ClientUpdateDto;
 import mindSwap.mindera.porto.RentACarAPI.converter.ClientConverter;
+import mindSwap.mindera.porto.RentACarAPI.exceptions.AppExceptions;
 import mindSwap.mindera.porto.RentACarAPI.model.Client;
 import mindSwap.mindera.porto.RentACarAPI.repository.ClientRepository;
+import mindSwap.mindera.porto.RentACarAPI.utils.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,12 +18,12 @@ import java.util.Optional;
 import static mindSwap.mindera.porto.RentACarAPI.converter.ClientConverter.fromClientDtoToCrearteClient;
 
 @Service
-public class ClientService {
+public class ClientServiceImpl implements ClientServiceI{
 
     private final ClientRepository clientRepository;
 
     @Autowired
-    public ClientService(ClientRepository clientRepository) {
+    public ClientServiceImpl(ClientRepository clientRepository) {
         this.clientRepository = clientRepository;
     }
 
@@ -31,48 +34,43 @@ public class ClientService {
                 .toList();
     }
 
-    public void addNewClient(ClientCreateDto client) {
+    public Client addNewClient(ClientCreateDto client) {
         Optional<Client> clientOptional = this.clientRepository.findClientByEmail(client.email());
         if (clientOptional.isPresent()) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
-            return;
+            return null;
         }
 
         Client newClient = fromClientDtoToCrearteClient(client);
-        clientRepository.save(newClient);
+        return clientRepository.save(newClient);
     }
 
     public void deleteClient(Long clientId) {
         if(!clientRepository.existsById(clientId)) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client with id " + clientId + "does not exist");
+
+            throw new AppExceptions(Messages.CLIENT_NOT_FOUND.getMessage());
+
         }
         clientRepository.deleteById(clientId);
     }
 
-    public void updateClient(Long id, Client client) {
+    public void updateClient(Long id, ClientUpdateDto clientUpdateDto) {
 
         Optional<Client> clientOptional = clientRepository.findById(id);
         if(!clientOptional.isPresent()) {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client with id " + id + " does not exist");
         }
         Client clientToUpdate = clientOptional.get();
-        if(client.getName() != null && client.getName().length() > 0 && !client.getName().equals(clientToUpdate.getName())) {
-            clientToUpdate.setName(client.getName());
+        if(clientUpdateDto.name() != null && clientUpdateDto.name().length() > 0 && !clientUpdateDto.name().equals(clientToUpdate.getName())) {
+            clientToUpdate.setName(clientUpdateDto.name());
         }
-        if(client.getEmail() != null && client.getEmail().length() > 0 && !client.getEmail().equals(clientToUpdate.getEmail())){
-            Optional<Client> clientOptionalEmail = clientRepository.findClientByEmail(client.getEmail());
+        if(clientUpdateDto.email() != null && clientUpdateDto.email().length() > 0 && !clientUpdateDto.email().equals(clientToUpdate.getEmail())){
+            Optional<Client> clientOptionalEmail = clientRepository.findClientByEmail(clientUpdateDto.email());
             if (clientOptionalEmail.isPresent())
                 ResponseEntity.status(HttpStatus.BAD_REQUEST).body("email already exists");
-            clientToUpdate.setEmail(client.getEmail());
+            clientToUpdate.setEmail(clientUpdateDto.email());
         }
-        if(client.getDriverLicence() >= 0 && client.getDriverLicence() != clientToUpdate.getDriverLicence()) {
 
-            clientToUpdate.setDriverLicence(client.getDriverLicence());
-
-        }
-        if (client.getDateOfBirth() != null && !client.getDateOfBirth().equals(clientToUpdate.getDateOfBirth())) {
-            clientToUpdate.setDateOfBirth(client.getDateOfBirth());
-        }
         clientRepository.save(clientToUpdate);
     }
 
@@ -84,5 +82,7 @@ public class ClientService {
         }
         return optionalClient.get();
     }
+
+
 
 }

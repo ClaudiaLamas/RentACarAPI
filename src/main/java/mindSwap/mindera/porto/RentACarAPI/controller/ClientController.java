@@ -1,8 +1,9 @@
 package mindSwap.mindera.porto.RentACarAPI.controller;
 
 import mindSwap.mindera.porto.RentACarAPI.clientDto.ClientCreateDto;
+import mindSwap.mindera.porto.RentACarAPI.clientDto.ClientUpdateDto;
 import mindSwap.mindera.porto.RentACarAPI.model.Client;
-import mindSwap.mindera.porto.RentACarAPI.service.ClientService;
+import mindSwap.mindera.porto.RentACarAPI.service.ClientServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +14,10 @@ import java.util.List;
 @RestController
 @RequestMapping("api/v1/clients")
 public class ClientController {
-    private final ClientService clientService;
+    private final ClientServiceImpl clientService;
 
     @Autowired
-    public ClientController(ClientService clientService) {
+    public ClientController(ClientServiceImpl clientService) {
         this.clientService = clientService;
     }
 
@@ -28,13 +29,21 @@ public class ClientController {
     @PostMapping("/")
     public ResponseEntity<Client> addNewClient(@RequestBody ClientCreateDto client) {
 
-        clientService.addNewClient(client);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+
+        return new ResponseEntity<>(clientService.addNewClient(client), HttpStatus.CREATED);
     }
 
-    @DeleteMapping(path = "clientId")
+    @PutMapping("{clientId}")
+    public ResponseEntity<Client> updateClient(@PathVariable("clientId") Long clientId, @RequestBody ClientUpdateDto clientUpdateDto) {
+        clientService.updateClient(clientId, clientUpdateDto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+    @DeleteMapping(path = "{clientId}")
     public ResponseEntity<Client> deleteClient(@PathVariable("clientId") Long clientId) {
         clientService.deleteClient(clientId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
 }
