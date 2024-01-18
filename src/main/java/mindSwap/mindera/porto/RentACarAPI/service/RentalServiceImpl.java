@@ -2,6 +2,7 @@ package mindSwap.mindera.porto.RentACarAPI.service;
 
 import mindSwap.mindera.porto.RentACarAPI.converter.RentalConverter;
 import mindSwap.mindera.porto.RentACarAPI.exceptions.AppExceptions;
+import mindSwap.mindera.porto.RentACarAPI.exceptions.RentalIdNotFoundException;
 import mindSwap.mindera.porto.RentACarAPI.model.Car;
 import mindSwap.mindera.porto.RentACarAPI.model.Client;
 import mindSwap.mindera.porto.RentACarAPI.model.Rental;
@@ -43,6 +44,10 @@ public class RentalServiceImpl implements RentalServiceI{
         Car car = carService.getCarById(rentalPostDto.carId());
 
         Client client = clientService.getClientById(rentalPostDto.clientId());
+
+        if(rentalPostDto.lastDayRent().isBefore(rentalPostDto.initialDate())) {
+            throw new AppExceptions(Messages.LAST_DAY_RENTAL.getMessage());
+        }
 
 
         //Rental newRental = RentalConverter.fromRentalDtoToRental(client, car, rentalDto.initialRent(), rentalDto.lastDayRental());
@@ -88,7 +93,7 @@ public class RentalServiceImpl implements RentalServiceI{
         boolean rentalExists = rentalRepository.existsById(id);
 
         if (!rentalExists){
-            throw new AppExceptions(Messages.RENTAL_NOT_FOUND.getMessage());
+            throw new RentalIdNotFoundException(Messages.RENTAL_NOT_FOUND.getMessage());
         }
         rentalRepository.deleteById(id);
     }

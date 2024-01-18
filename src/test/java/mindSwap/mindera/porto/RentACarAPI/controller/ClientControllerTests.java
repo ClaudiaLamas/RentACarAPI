@@ -1,4 +1,4 @@
-package mindSwap.mindera.porto.RentACarAPI;
+package mindSwap.mindera.porto.RentACarAPI.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class RentACarApiApplicationClientsTests {
+class ClientControllerTests {
 
 	@Autowired
 	private MockMvc mockMvc;
