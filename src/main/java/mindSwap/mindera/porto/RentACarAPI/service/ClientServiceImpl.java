@@ -3,13 +3,12 @@ package mindSwap.mindera.porto.RentACarAPI.service;
 import mindSwap.mindera.porto.RentACarAPI.clientDto.ClientCreateDto;
 import mindSwap.mindera.porto.RentACarAPI.clientDto.ClientUpdateDto;
 import mindSwap.mindera.porto.RentACarAPI.converter.ClientConverter;
-import mindSwap.mindera.porto.RentACarAPI.exceptions.AppExceptions;
+import mindSwap.mindera.porto.RentACarAPI.exceptions.ClientIdNotFoundException;
+import mindSwap.mindera.porto.RentACarAPI.exceptions.EmailAlreadyExistsException;
 import mindSwap.mindera.porto.RentACarAPI.model.Client;
 import mindSwap.mindera.porto.RentACarAPI.repository.ClientRepository;
 import mindSwap.mindera.porto.RentACarAPI.utils.Messages;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,8 +36,7 @@ public class ClientServiceImpl implements ClientServiceI{
     public Client addNewClient(ClientCreateDto client) {
         Optional<Client> clientOptional = this.clientRepository.findClientByEmail(client.email());
         if (clientOptional.isPresent()) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists");
-            return null;
+            throw new EmailAlreadyExistsException(Messages.EMAIL_EXISTS.getMessage());
         }
 
         Client newClient = fromClientDtoToCrearteClient(client);
@@ -48,7 +46,7 @@ public class ClientServiceImpl implements ClientServiceI{
     public void deleteClient(Long clientId) {
         if(!clientRepository.existsById(clientId)) {
 
-            throw new AppExceptions(Messages.CLIENT_NOT_FOUND.getMessage());
+            throw new ClientIdNotFoundException(Messages.CLIENT_NOT_FOUND.getMessage());
 
         }
         clientRepository.deleteById(clientId);
@@ -58,7 +56,7 @@ public class ClientServiceImpl implements ClientServiceI{
 
         Optional<Client> clientOptional = clientRepository.findById(id);
         if(!clientOptional.isPresent()) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client with id " + id + " does not exist");
+            throw new ClientIdNotFoundException(Messages.CLIENT_NOT_FOUND.getMessage());
         }
         Client clientToUpdate = clientOptional.get();
         if(clientUpdateDto.name() != null && clientUpdateDto.name().length() > 0 && !clientUpdateDto.name().equals(clientToUpdate.getName())) {
@@ -67,7 +65,7 @@ public class ClientServiceImpl implements ClientServiceI{
         if(clientUpdateDto.email() != null && clientUpdateDto.email().length() > 0 && !clientUpdateDto.email().equals(clientToUpdate.getEmail())){
             Optional<Client> clientOptionalEmail = clientRepository.findClientByEmail(clientUpdateDto.email());
             if (clientOptionalEmail.isPresent())
-                ResponseEntity.status(HttpStatus.BAD_REQUEST).body("email already exists");
+                throw new EmailAlreadyExistsException(Messages.EMAIL_EXISTS.getMessage());
             clientToUpdate.setEmail(clientUpdateDto.email());
         }
 
@@ -78,7 +76,7 @@ public class ClientServiceImpl implements ClientServiceI{
         Optional<Client> optionalClient = clientRepository.findById(id);
 
         if (optionalClient.isEmpty()) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Client with id " + id + " does not exist");
+            throw new ClientIdNotFoundException(Messages.CLIENT_NOT_FOUND.getMessage());
         }
         return optionalClient.get();
     }

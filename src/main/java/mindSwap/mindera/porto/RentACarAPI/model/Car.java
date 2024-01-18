@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 @Entity
 @Table
+//@AllArgsConstructor
 public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +29,18 @@ public class Car {
         this.km = km;
         this.acquisitionDate = acquisitionDate;
     }
+
+
+    public Car(long id, String brand, String plate, int horsePower, int km, LocalDate acquisitionDate) {
+        this.id = id;
+        this.brand = brand;
+        this.plate = plate;
+        this.horsePower = horsePower;
+        this.km = km;
+        this.acquisitionDate = acquisitionDate;
+    }
+
+
 
     public long getId() {
         return id;

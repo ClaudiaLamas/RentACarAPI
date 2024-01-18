@@ -46,12 +46,13 @@ class RentalControllerTest {
 
     @BeforeEach
     public void init() {
-        carRepository.deleteAll();
-        clientRepository.deleteAll();
         rentalRepository.deleteAll();
+        rentalRepository.resetId();
+        clientRepository.deleteAll();
+        carRepository.deleteAll();
         carRepository.resetId();
         clientRepository.resetId();
-        rentalRepository.resetId();
+
     }
 
     @Test
@@ -74,7 +75,7 @@ class RentalControllerTest {
         //Given
         String carJson = "{\"brand\": \"BMW\", \"plate\": \"AA-11-AA\", \"horsePower\": \"200\" ,\"km\": \"40\" , \"acquisitionDate\": \"2022-11-12\"}";
         String clientJson = "{\"name\": \"Joao\", \"email\": \"j@eee.com\", \"driverLicence\": \"111111111\" ,\"dateOfBirth\": \"1990-01-01\" , \"nif\": \"111111111\"}";
-        String rentalJson = "{\"clientId\": \"1\", \"carId\": \"1\", \"initialDate\": \"2024-01-19\" ,\"lastDayRent\": \"2024-21-24\" }";
+        String rentalJson = "{\"clientId\": 1, \"carId\": 1, \"initialDate\": \"2024-01-01\", \"lastDayRent\": \"2024-01-01\"}";
 
 
         //When
@@ -129,7 +130,7 @@ class RentalControllerTest {
         //Create 1 rentals
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/rentals/")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"clientId\": \"1\", \"carId\": \"1\", \"initialDate\": \"2024-01-19\" ,\"lastDayRent\": \"2024-21-24\" }"));
+                .content("{\"clientId\": 1, \"carId\": 1, \"initialDate\": \"2024-01-01\", \"lastDayRent\": \"2024-01-01\"}"));
 
 
 
@@ -137,16 +138,8 @@ class RentalControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$", hasSize(1)));
-     /*
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/rentals/"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(1)));
 
-
-      */
         //delete
-       // mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/rentals/1"));
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/rentals/1"));
     }
 
